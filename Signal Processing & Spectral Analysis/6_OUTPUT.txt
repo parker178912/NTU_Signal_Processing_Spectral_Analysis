@@ -1,0 +1,23 @@
+Pass:
+
+           Names   Grade
+            Andy      90
+            Sean     100
+           Mindy      77
+             Ben      70
+------------------------------------
+             Max     100
+             Min      70
+            Mean   84.25
+Number of People       4
+
+Fail:
+
+           Names   Grade
+           Sandy      63
+           Peter      45
+------------------------------------
+             Max      63
+             Min      45
+            Mean   56.00
+Number of People       3

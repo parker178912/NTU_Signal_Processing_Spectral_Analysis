@@ -1,0 +1,584 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>signal_processing_hw5</title><meta name="generator" content="MATLAB 9.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-10-16"><meta name="DC.source" content="signal_processing_hw5.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">zero mean</a></li><li><a href="#3">Data Pre-Processing (Low pass filter and then down sampling the data)</a></li><li><a href="#4">zero mean</a></li><li><a href="#5">correlation</a></li><li><a href="#6">power spectrum density</a></li><li><a href="#7">Eigen Value Spectrum(singular value distribution)</a></li><li><a href="#8">plot singular value spectrum</a></li><li><a href="#9">Extract indexes for each principle frequency</a></li><li><a href="#10">mode shape</a></li></ul></div><pre class="codeinput">clc; clear <span class="string">all</span>; close <span class="string">all</span>;
+
+xlsFile = <span class="string">'HW-5-Pre-event Data of No-110103 NCREE.xlsx'</span>;
+data = xlsread(xlsFile);
+SR = 200;
+T = 1/SR;
+L = length(data);
+</pre><h2 id="2">zero mean</h2><pre class="codeinput"><span class="keyword">for</span> i= 1:14
+    data(:,i) = data(:,i) - mean(data(:,i));
+<span class="keyword">end</span>
+</pre><h2 id="3">Data Pre-Processing (Low pass filter and then down sampling the data)</h2><pre class="codeinput">cff = 20;
+Acc = zeros(L, 14);
+[Para_B, Para_A] = butter(14, cff/(0.5*SR), <span class="string">'low'</span>);
+<span class="keyword">for</span> i = 1:size(data, 2)
+    Acc(:, i) = filtfilt(Para_B, Para_A, data(:, i));
+<span class="keyword">end</span>
+clear <span class="string">Para_A</span> <span class="string">Para_B</span>
+
+ratio = 4;
+SR = SR/ratio;
+data = Acc(1:ratio:end,:);
+</pre><h2 id="4">zero mean</h2><pre class="codeinput"><span class="keyword">for</span> i= 1:14
+    data(:,i) = data(:,i) - mean(data(:,i));
+<span class="keyword">end</span>
+</pre><h2 id="5">correlation</h2><pre class="codeinput"><span class="keyword">for</span> i = 1:14
+    <span class="keyword">for</span> j = 1:14
+        R_acc(i,j,:) = xcorr(data(:,i),data(:,j),<span class="string">'unbiased'</span>);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+pt = size(R_acc,3);
+R_acc = R_acc(:,:,1:round(pt/2));
+pt = size(R_acc,3);
+R_acc = R_acc(:,:,end:-1:1);
+R_acc = R_acc(:,:,1:round(pt/2));
+pt = size(R_acc,3);
+</pre><h2 id="6">power spectrum density</h2><pre class="codeinput">PSD = zeros(14,14,pt);
+<span class="keyword">for</span> i = 1:14
+    <span class="keyword">for</span> j = 1:14
+        Lu(i,j,:) = (R_acc(i,j,:) + R_acc(j,i,:))/2;
+        Qu(i,j,:) = (R_acc(i,j,:) - R_acc(j,i,:))/2;
+        Lf(i,j,:) = real(fft(Lu(i,j,:)));
+        Qf(i,j,:) = imag(fft(Qu(i,j,:)));
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+PSD = Lf - Qf * 1i;
+</pre><h2 id="7">Eigen Value Spectrum(singular value distribution)</h2><pre class="codeinput"><span class="keyword">for</span> i = 1:size(PSD,3)
+    [U(:,:,i),SS,V(:,:,i)] = svd(PSD(:,:,i).');
+    S(:,i) = diag(SS);
+    U1(:,i) = U(:,1,i);
+    PSD(:,:,i) = (U(:,:,i)*SS*U(:,:,i)').';
+<span class="keyword">end</span>
+f = (0:pt-1) / (pt/SR);
+</pre><h2 id="8">plot singular value spectrum</h2><pre class="codeinput">figure
+semilogy(f,S(1,:));
+hold <span class="string">on</span>
+semilogy(f,S(2,:)/5)
+semilogy(f,S(3,:)/10)
+xlim([0,25])
+</pre><img vspace="5" hspace="5" src="signal_processing_hw5_01.png" alt=""> <h2 id="9">Extract indexes for each principle frequency</h2><pre class="codeinput"><span class="keyword">for</span> i = 1:length(f)
+    <span class="keyword">if</span> f(i)&gt;1.464 &amp;&amp; f(i)&lt;1.465
+        m1 = i;
+    <span class="keyword">elseif</span> f(i)&gt;3.417 &amp;&amp; f(i)&lt;3.418
+        m2 = i;
+    <span class="keyword">elseif</span> f(i)&gt;3.808 &amp;&amp; f(i)&lt;3.809
+        m3 = i;
+    <span class="keyword">elseif</span> f(i)&gt;5.273 &amp;&amp; f(i)&lt;5.274
+        m4 = i;
+    <span class="keyword">elseif</span> f(i)&gt;5.566 &amp;&amp; f(i)&lt;5.567
+        m5 = i;
+    <span class="keyword">elseif</span> f(i)&gt;5.859 &amp;&amp; f(i)&lt;5.86
+        m6 = i;
+    <span class="keyword">elseif</span> f(i)&gt;7.421 &amp;&amp; f(i)&lt;7.422
+        m7 = i;
+    <span class="keyword">elseif</span> f(i)&gt;10.156 &amp;&amp; f(i)&lt;10.157
+        m8 = i;
+    <span class="keyword">elseif</span> f(i)&gt;10.351 &amp;&amp; f(i)&lt;10.352
+        m9 = i;
+    <span class="keyword">elseif</span> f(i)&gt;13.085 &amp;&amp; f(i)&lt;13.086
+        m10 = i;
+    <span class="keyword">elseif</span> f(i)&gt;13.378 &amp;&amp; f(i)&lt;13.379
+        m11 = i;
+    <span class="keyword">elseif</span> f(i)&gt;15.136 &amp;&amp; f(i)&lt;15.137
+        m12 = i;
+    <span class="keyword">elseif</span> f(i)&gt;17.480 &amp;&amp; f(i)&lt;17.481
+        m13 = i;
+    <span class="keyword">elseif</span> f(i)&gt;20.019 &amp;&amp; f(i)&lt;20.02
+        m14 = i;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><h2 id="10">mode shape</h2><pre class="codeinput">mode=zeros(14,14);
+<span class="comment">% fill mode shape array using the real values at the identified indices</span>
+<span class="keyword">for</span> i=1:14
+    mode(i,:) = [U1(i,m1),U1(i,m2),U1(i,m3),U1(i,m4),U1(i,m5),U1(i,m6),U1(i,m7),U1(i,m8),U1(i,m9),U1(i,m10),U1(i,m11),U1(i,m12),U1(i,m13),U1(i,m14)];
+<span class="keyword">end</span>
+<span class="comment">% floor number</span>
+floorplot=(0:1:13)';
+<span class="comment">% vertical line</span>
+vertical = zeros(14,1);
+
+<span class="comment">% plot mode shape</span>
+figure
+plot(vertical,floorplot);
+hold <span class="string">on</span>
+plot(mode(:,1),floorplot)
+xlim([-1,1])
+ylabel(<span class="string">'Floor Number'</span>)
+xlabel(<span class="string">'Amplitude'</span>)
+title(<span class="string">'Mode shape for 1.46484 Hz'</span>)
+hold <span class="string">off</span>
+
+figure
+plot(vertical,floorplot);
+hold <span class="string">on</span>
+plot(mode(:,2),floorplot)
+xlim([-1,1])
+ylabel(<span class="string">'Floor Number'</span>)
+xlabel(<span class="string">'Amplitude'</span>)
+title(<span class="string">'Mode shape for 3.41797 Hz'</span>)
+hold <span class="string">off</span>
+
+figure
+plot(vertical,floorplot);
+hold <span class="string">on</span>
+plot(mode(:,3),floorplot)
+xlim([-1,1])
+ylabel(<span class="string">'Floor Number'</span>)
+xlabel(<span class="string">'Amplitude'</span>)
+title(<span class="string">'Mode shape for 3.80859 Hz'</span>)
+hold <span class="string">off</span>
+
+figure
+plot(vertical,floorplot);
+hold <span class="string">on</span>
+plot(mode(:,4),floorplot)
+xlim([-1,1])
+ylabel(<span class="string">'Floor Number'</span>)
+xlabel(<span class="string">'Amplitude'</span>)
+title(<span class="string">'Mode shape for 5.27344 Hz'</span>)
+hold <span class="string">off</span>
+
+figure
+plot(vertical,floorplot);
+hold <span class="string">on</span>
+plot(mode(:,5),floorplot)
+xlim([-1,1])
+ylabel(<span class="string">'Floor Number'</span>)
+xlabel(<span class="string">'Amplitude'</span>)
+title(<span class="string">'Mode shape for 5.56641 Hz'</span>)
+hold <span class="string">off</span>
+
+figure
+plot(vertical,floorplot);
+hold <span class="string">on</span>
+plot(mode(:,6),floorplot)
+xlim([-1,1])
+ylabel(<span class="string">'Floor Number'</span>)
+xlabel(<span class="string">'Amplitude'</span>)
+title(<span class="string">'Mode shape for 5.85938 Hz'</span>)
+hold <span class="string">off</span>
+
+figure
+plot(vertical,floorplot);
+hold <span class="string">on</span>
+plot(mode(:,7),floorplot)
+xlim([-1,1])
+ylabel(<span class="string">'Floor Number'</span>)
+xlabel(<span class="string">'Amplitude'</span>)
+title(<span class="string">'Mode shape for 7.42188 Hz'</span>)
+hold <span class="string">off</span>
+
+figure
+plot(vertical,floorplot);
+hold <span class="string">on</span>
+plot(mode(:,8),floorplot)
+xlim([-1,1])
+ylabel(<span class="string">'Floor Number'</span>)
+xlabel(<span class="string">'Amplitude'</span>)
+title(<span class="string">'Mode shape for 10.1562 Hz'</span>)
+hold <span class="string">off</span>
+
+figure
+plot(vertical,floorplot);
+hold <span class="string">on</span>
+plot(mode(:,9),floorplot)
+xlim([-1,1])
+ylabel(<span class="string">'Floor Number'</span>)
+xlabel(<span class="string">'Amplitude'</span>)
+title(<span class="string">'Mode shape for 10.3516 Hz'</span>)
+hold <span class="string">off</span>
+
+figure
+plot(vertical,floorplot);
+hold <span class="string">on</span>
+plot(mode(:,10),floorplot)
+xlim([-1,1])
+ylabel(<span class="string">'Floor Number'</span>)
+xlabel(<span class="string">'Amplitude'</span>)
+title(<span class="string">'Mode shape for 13.0859 Hz'</span>)
+hold <span class="string">off</span>
+
+figure
+plot(vertical,floorplot);
+hold <span class="string">on</span>
+plot(mode(:,11),floorplot)
+xlim([-1,1])
+ylabel(<span class="string">'Floor Number'</span>)
+xlabel(<span class="string">'Amplitude'</span>)
+title(<span class="string">'Mode shape for 13.3789 Hz'</span>)
+hold <span class="string">off</span>
+
+figure
+plot(vertical,floorplot);
+hold <span class="string">on</span>
+plot(mode(:,12),floorplot)
+xlim([-1,1])
+ylabel(<span class="string">'Floor Number'</span>)
+xlabel(<span class="string">'Amplitude'</span>)
+title(<span class="string">'Mode shape for 15.1367 Hz'</span>)
+hold <span class="string">off</span>
+
+figure
+plot(vertical,floorplot);
+hold <span class="string">on</span>
+plot(mode(:,13),floorplot)
+xlim([-1,1])
+ylabel(<span class="string">'Floor Number'</span>)
+xlabel(<span class="string">'Amplitude'</span>)
+title(<span class="string">'Mode shape for 17.4805 Hz'</span>)
+hold <span class="string">off</span>
+
+figure
+plot(vertical,floorplot);
+hold <span class="string">on</span>
+plot(mode(:,14),floorplot)
+xlim([-1,1])
+ylabel(<span class="string">'Floor Number'</span>)
+xlabel(<span class="string">'Amplitude'</span>)
+title(<span class="string">'Mode shape for 20.0195 Hz'</span>)
+hold <span class="string">off</span>
+</pre><pre class="codeoutput">Warning: Imaginary parts of complex X and/or Y arguments ignored. 
+Warning: Imaginary parts of complex X and/or Y arguments ignored. 
+Warning: Imaginary parts of complex X and/or Y arguments ignored. 
+Warning: Imaginary parts of complex X and/or Y arguments ignored. 
+Warning: Imaginary parts of complex X and/or Y arguments ignored. 
+Warning: Imaginary parts of complex X and/or Y arguments ignored. 
+Warning: Imaginary parts of complex X and/or Y arguments ignored. 
+Warning: Imaginary parts of complex X and/or Y arguments ignored. 
+Warning: Imaginary parts of complex X and/or Y arguments ignored. 
+Warning: Imaginary parts of complex X and/or Y arguments ignored. 
+Warning: Imaginary parts of complex X and/or Y arguments ignored. 
+Warning: Imaginary parts of complex X and/or Y arguments ignored. 
+Warning: Imaginary parts of complex X and/or Y arguments ignored. 
+Warning: Imaginary parts of complex X and/or Y arguments ignored. 
+</pre><img vspace="5" hspace="5" src="signal_processing_hw5_02.png" alt=""> <img vspace="5" hspace="5" src="signal_processing_hw5_03.png" alt=""> <img vspace="5" hspace="5" src="signal_processing_hw5_04.png" alt=""> <img vspace="5" hspace="5" src="signal_processing_hw5_05.png" alt=""> <img vspace="5" hspace="5" src="signal_processing_hw5_06.png" alt=""> <img vspace="5" hspace="5" src="signal_processing_hw5_07.png" alt=""> <img vspace="5" hspace="5" src="signal_processing_hw5_08.png" alt=""> <img vspace="5" hspace="5" src="signal_processing_hw5_09.png" alt=""> <img vspace="5" hspace="5" src="signal_processing_hw5_10.png" alt=""> <img vspace="5" hspace="5" src="signal_processing_hw5_11.png" alt=""> <img vspace="5" hspace="5" src="signal_processing_hw5_12.png" alt=""> <img vspace="5" hspace="5" src="signal_processing_hw5_13.png" alt=""> <img vspace="5" hspace="5" src="signal_processing_hw5_14.png" alt=""> <img vspace="5" hspace="5" src="signal_processing_hw5_15.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2022a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+clc; clear all; close all;
+
+xlsFile = 'HW-5-Pre-event Data of No-110103 NCREE.xlsx';
+data = xlsread(xlsFile);
+SR = 200;
+T = 1/SR;
+L = length(data);
+
+%% zero mean
+for i= 1:14
+    data(:,i) = data(:,i) - mean(data(:,i));
+end
+
+%% Data Pre-Processing (Low pass filter and then down sampling the data)
+cff = 20;
+Acc = zeros(L, 14);
+[Para_B, Para_A] = butter(14, cff/(0.5*SR), 'low');
+for i = 1:size(data, 2)
+    Acc(:, i) = filtfilt(Para_B, Para_A, data(:, i));
+end
+clear Para_A Para_B
+
+ratio = 4;
+SR = SR/ratio;
+data = Acc(1:ratio:end,:);
+
+%% zero mean
+for i= 1:14
+    data(:,i) = data(:,i) - mean(data(:,i));
+end
+
+%% correlation
+for i = 1:14
+    for j = 1:14
+        R_acc(i,j,:) = xcorr(data(:,i),data(:,j),'unbiased');
+    end
+end
+pt = size(R_acc,3);
+R_acc = R_acc(:,:,1:round(pt/2));
+pt = size(R_acc,3); 
+R_acc = R_acc(:,:,end:-1:1);
+R_acc = R_acc(:,:,1:round(pt/2));
+pt = size(R_acc,3);
+
+
+%% power spectrum density
+PSD = zeros(14,14,pt);
+for i = 1:14
+    for j = 1:14
+        Lu(i,j,:) = (R_acc(i,j,:) + R_acc(j,i,:))/2;
+        Qu(i,j,:) = (R_acc(i,j,:) - R_acc(j,i,:))/2;
+        Lf(i,j,:) = real(fft(Lu(i,j,:)));
+        Qf(i,j,:) = imag(fft(Qu(i,j,:)));
+    end
+end
+PSD = Lf - Qf * 1i;
+
+%% Eigen Value Spectrum(singular value distribution)
+for i = 1:size(PSD,3)
+    [U(:,:,i),SS,V(:,:,i)] = svd(PSD(:,:,i).');
+    S(:,i) = diag(SS);
+    U1(:,i) = U(:,1,i);
+    PSD(:,:,i) = (U(:,:,i)*SS*U(:,:,i)').';
+end
+f = (0:pt-1) / (pt/SR);
+
+%% plot singular value spectrum
+figure
+semilogy(f,S(1,:));
+hold on
+semilogy(f,S(2,:)/5)
+semilogy(f,S(3,:)/10)
+xlim([0,25])
+
+%% Extract indexes for each principle frequency
+for i = 1:length(f)
+    if f(i)>1.464 && f(i)<1.465
+        m1 = i;
+    elseif f(i)>3.417 && f(i)<3.418
+        m2 = i;
+    elseif f(i)>3.808 && f(i)<3.809
+        m3 = i;
+    elseif f(i)>5.273 && f(i)<5.274
+        m4 = i;
+    elseif f(i)>5.566 && f(i)<5.567
+        m5 = i;
+    elseif f(i)>5.859 && f(i)<5.86
+        m6 = i;
+    elseif f(i)>7.421 && f(i)<7.422
+        m7 = i;
+    elseif f(i)>10.156 && f(i)<10.157
+        m8 = i;
+    elseif f(i)>10.351 && f(i)<10.352
+        m9 = i;
+    elseif f(i)>13.085 && f(i)<13.086
+        m10 = i;
+    elseif f(i)>13.378 && f(i)<13.379
+        m11 = i;
+    elseif f(i)>15.136 && f(i)<15.137
+        m12 = i;
+    elseif f(i)>17.480 && f(i)<17.481
+        m13 = i;
+    elseif f(i)>20.019 && f(i)<20.02
+        m14 = i;
+    end
+end
+
+%% mode shape
+mode=zeros(14,14);
+% fill mode shape array using the real values at the identified indices
+for i=1:14
+    mode(i,:) = [U1(i,m1),U1(i,m2),U1(i,m3),U1(i,m4),U1(i,m5),U1(i,m6),U1(i,m7),U1(i,m8),U1(i,m9),U1(i,m10),U1(i,m11),U1(i,m12),U1(i,m13),U1(i,m14)];
+end
+% floor number
+floorplot=(0:1:13)';
+% vertical line
+vertical = zeros(14,1);
+
+% plot mode shape
+figure
+plot(vertical,floorplot);
+hold on
+plot(mode(:,1),floorplot)
+xlim([-1,1])
+ylabel('Floor Number')
+xlabel('Amplitude')
+title('Mode shape for 1.46484 Hz')
+hold off
+
+figure
+plot(vertical,floorplot);
+hold on
+plot(mode(:,2),floorplot)
+xlim([-1,1])
+ylabel('Floor Number')
+xlabel('Amplitude')
+title('Mode shape for 3.41797 Hz')
+hold off
+
+figure
+plot(vertical,floorplot);
+hold on
+plot(mode(:,3),floorplot)
+xlim([-1,1])
+ylabel('Floor Number')
+xlabel('Amplitude')
+title('Mode shape for 3.80859 Hz')
+hold off
+
+figure
+plot(vertical,floorplot);
+hold on
+plot(mode(:,4),floorplot)
+xlim([-1,1])
+ylabel('Floor Number')
+xlabel('Amplitude')
+title('Mode shape for 5.27344 Hz')
+hold off
+
+figure
+plot(vertical,floorplot);
+hold on
+plot(mode(:,5),floorplot)
+xlim([-1,1])
+ylabel('Floor Number')
+xlabel('Amplitude')
+title('Mode shape for 5.56641 Hz')
+hold off
+
+figure
+plot(vertical,floorplot);
+hold on
+plot(mode(:,6),floorplot)
+xlim([-1,1])
+ylabel('Floor Number')
+xlabel('Amplitude')
+title('Mode shape for 5.85938 Hz')
+hold off
+
+figure
+plot(vertical,floorplot);
+hold on
+plot(mode(:,7),floorplot)
+xlim([-1,1])
+ylabel('Floor Number')
+xlabel('Amplitude')
+title('Mode shape for 7.42188 Hz')
+hold off
+
+figure
+plot(vertical,floorplot);
+hold on
+plot(mode(:,8),floorplot)
+xlim([-1,1])
+ylabel('Floor Number')
+xlabel('Amplitude')
+title('Mode shape for 10.1562 Hz')
+hold off
+
+figure
+plot(vertical,floorplot);
+hold on
+plot(mode(:,9),floorplot)
+xlim([-1,1])
+ylabel('Floor Number')
+xlabel('Amplitude')
+title('Mode shape for 10.3516 Hz')
+hold off
+
+figure
+plot(vertical,floorplot);
+hold on
+plot(mode(:,10),floorplot)
+xlim([-1,1])
+ylabel('Floor Number')
+xlabel('Amplitude')
+title('Mode shape for 13.0859 Hz')
+hold off
+
+figure
+plot(vertical,floorplot);
+hold on
+plot(mode(:,11),floorplot)
+xlim([-1,1])
+ylabel('Floor Number')
+xlabel('Amplitude')
+title('Mode shape for 13.3789 Hz')
+hold off
+
+figure
+plot(vertical,floorplot);
+hold on
+plot(mode(:,12),floorplot)
+xlim([-1,1])
+ylabel('Floor Number')
+xlabel('Amplitude')
+title('Mode shape for 15.1367 Hz')
+hold off
+
+figure
+plot(vertical,floorplot);
+hold on
+plot(mode(:,13),floorplot)
+xlim([-1,1])
+ylabel('Floor Number')
+xlabel('Amplitude')
+title('Mode shape for 17.4805 Hz')
+hold off
+
+figure
+plot(vertical,floorplot);
+hold on
+plot(mode(:,14),floorplot)
+xlim([-1,1])
+ylabel('Floor Number')
+xlabel('Amplitude')
+title('Mode shape for 20.0195 Hz')
+hold off
+##### SOURCE END #####
+--></body></html>

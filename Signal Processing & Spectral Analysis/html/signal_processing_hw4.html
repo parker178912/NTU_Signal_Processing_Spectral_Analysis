@@ -1,0 +1,261 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>signal_processing_hw4</title><meta name="generator" content="MATLAB 9.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-10-10"><meta name="DC.source" content="signal_processing_hw4.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">(a)</a></li><li><a href="#3">(b)</a></li><li><a href="#4">(c)</a></li><li><a href="#5">(d)</a></li></ul></div><pre class="codeinput">clc;clear;close <span class="string">all</span>;
+
+data = importdata(<span class="string">"HW3- building seismic response data.txt"</span>);
+t = data(:,1);
+x = data(:,2);
+y = data(:,3);
+T = 0.005;
+fs = 1/T;
+</pre><h2 id="2">(a)</h2><pre class="codeinput"><span class="comment">%Sxx</span>
+[Rxx, lag1] = xcorr(x, length(x)/2);
+pt = round((size(Rxx,1)/2));
+Rxx = Rxx(1:pt);
+Rxx = Rxx(end:-1:1);
+pt = round((size(Rxx,1)/2));
+Rxx = Rxx(1:pt);
+Sxx = abs(fft(Rxx));
+fxx = (0:pt-1)*((T*pt)^-1);
+subplot(3,1,1);
+plot(fxx(1:pt/2),Sxx(1:pt/2)*2/pt);
+xlabel(<span class="string">'Frequency(Hz)'</span>);
+ylabel(<span class="string">'Ampitude'</span>);
+title(<span class="string">'via Correlation Function'</span>,<span class="string">'\bf Auto-spectrum Density Function(Sxx)'</span>);
+
+<span class="comment">%Syy</span>
+[Ryy, lag2] = xcorr(y, length(x)/2);
+pt = round((size(Ryy,1)/2));
+Ryy = Ryy(1:pt);
+Ryy = Ryy(end:-1:1);
+pt = round((size(Ryy,1)/2));
+Ryy = Ryy(1:pt);
+Syy = abs(fft(Ryy));
+fyy = (0:pt-1)*((T*pt)^-1);
+subplot(3,1,2);
+plot(fyy(1:pt/2),Syy(1:pt/2)*2/pt);
+xlabel(<span class="string">'Frequency(Hz)'</span>);
+ylabel(<span class="string">'Ampitude'</span>);
+title(<span class="string">'Auto-spectrum Density Function(Sxx)'</span>);
+</pre><pre class="codeoutput">Warning: Integer operands are required for colon operator when used as index. 
+Warning: Integer operands are required for colon operator when used as index. 
+Warning: Integer operands are required for colon operator when used as index. 
+Warning: Integer operands are required for colon operator when used as index. 
+</pre><img vspace="5" hspace="5" src="signal_processing_hw4_01.png" alt=""> <h2 id="3">(b)</h2><pre class="codeinput">[Rxy, lag3] = xcorr(x, y, length(x)/2);
+[Ryx, lag4] = xcorr(y, x);
+
+pt = round((size(Rxy,1)/2));
+Rxy = Rxy(1:pt);
+Ryx = Ryx(1:pt);
+Rxy = Rxy(end:-1:1);
+Ryx = Ryx(end:-1:1);
+pt = round((size(Rxy,1)/2));
+Rxy = Rxy(1:pt);
+Ryx = Ryx(1:pt);
+lxy = 0.5*(Rxy+Ryx);
+qxy = 0.5*(Rxy-Ryx);
+Lxy = real(fft(lxy));
+Qxy = real(fft(qxy));
+Sxy = Lxy-Qxy*1i;
+fxy = (0:pt-1)*((T*pt)^-1);
+subplot(3,1,3);
+plot(fxy(1:pt/2),Sxy(1:pt/2)*2/pt);
+xlabel(<span class="string">'Frequency(Hz)'</span>);
+ylabel(<span class="string">'Ampitude'</span>);
+title(<span class="string">'Cross-spectrum Density Function(Sxy)'</span>);
+saveas(gcf,<span class="string">'HW4_1CorrelationFnx.png'</span>);
+</pre><pre class="codeoutput">Warning: Integer operands are required for colon operator when used as index. 
+Warning: Integer operands are required for colon operator when used as index. 
+Warning: Imaginary parts of complex X and/or Y arguments ignored. 
+</pre><img vspace="5" hspace="5" src="signal_processing_hw4_02.png" alt=""> <h2 id="4">(c)</h2><pre class="codeinput">hf1 = Sxy./Sxx;
+subplot(2,1,1);
+plot(fxy,hf1);
+xlim([0 100]);
+xlabel(<span class="string">'Frequency(Hz)'</span>);
+ylabel(<span class="string">'Ampitude'</span>);
+title(<span class="string">'FRF'</span>);
+
+hf2 = (Sxy./Sxx).^0.5;
+subplot(2,1,2);
+plot(fxy,hf2);
+xlim([0 100]);
+xlabel(<span class="string">'Frequency(Hz)'</span>);
+ylabel(<span class="string">'Ampitude'</span>);
+title(<span class="string">'FRF'</span>);
+saveas(gcf,<span class="string">'HW4_2CorrelationFnx.png'</span>);
+</pre><pre class="codeoutput">Warning: Imaginary parts of complex X and/or Y arguments ignored. 
+Warning: Imaginary parts of complex X and/or Y arguments ignored. 
+</pre><img vspace="5" hspace="5" src="signal_processing_hw4_03.png" alt=""> <h2 id="5">(d)</h2><pre class="codeinput">gammasqr = (abs(Sxy).^2/(Sxx.*Syy));
+plot(fxy,gammasqr);
+xlim([0 100]);
+xlabel(<span class="string">'Frequency(Hz)'</span>);
+ylabel(<span class="string">'Ampitude'</span>);
+title(<span class="string">'Coherence(via Correlation Function)'</span>);
+saveas(gcf,<span class="string">'HW4_3CorrelationFnx.png'</span>);
+</pre><img vspace="5" hspace="5" src="signal_processing_hw4_04.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2022a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+clc;clear;close all;
+
+data = importdata("HW3- building seismic response data.txt");
+t = data(:,1);
+x = data(:,2);
+y = data(:,3);
+T = 0.005;
+fs = 1/T;
+%% (a)
+%Sxx
+[Rxx, lag1] = xcorr(x, length(x)/2);
+pt = round((size(Rxx,1)/2));
+Rxx = Rxx(1:pt);
+Rxx = Rxx(end:-1:1);
+pt = round((size(Rxx,1)/2));
+Rxx = Rxx(1:pt);
+Sxx = abs(fft(Rxx));
+fxx = (0:pt-1)*((T*pt)^-1);
+subplot(3,1,1);
+plot(fxx(1:pt/2),Sxx(1:pt/2)*2/pt);
+xlabel('Frequency(Hz)');
+ylabel('Ampitude');
+title('via Correlation Function','\bf Auto-spectrum Density Function(Sxx)');
+
+%Syy
+[Ryy, lag2] = xcorr(y, length(x)/2);
+pt = round((size(Ryy,1)/2));
+Ryy = Ryy(1:pt);
+Ryy = Ryy(end:-1:1);
+pt = round((size(Ryy,1)/2));
+Ryy = Ryy(1:pt);
+Syy = abs(fft(Ryy));
+fyy = (0:pt-1)*((T*pt)^-1);
+subplot(3,1,2);
+plot(fyy(1:pt/2),Syy(1:pt/2)*2/pt);
+xlabel('Frequency(Hz)');
+ylabel('Ampitude');
+title('Auto-spectrum Density Function(Sxx)');
+
+%% (b)
+[Rxy, lag3] = xcorr(x, y, length(x)/2);
+[Ryx, lag4] = xcorr(y, x);
+
+pt = round((size(Rxy,1)/2));
+Rxy = Rxy(1:pt);
+Ryx = Ryx(1:pt);
+Rxy = Rxy(end:-1:1);
+Ryx = Ryx(end:-1:1);
+pt = round((size(Rxy,1)/2));
+Rxy = Rxy(1:pt);
+Ryx = Ryx(1:pt);
+lxy = 0.5*(Rxy+Ryx);
+qxy = 0.5*(Rxy-Ryx);
+Lxy = real(fft(lxy));
+Qxy = real(fft(qxy));
+Sxy = Lxy-Qxy*1i;
+fxy = (0:pt-1)*((T*pt)^-1);
+subplot(3,1,3);
+plot(fxy(1:pt/2),Sxy(1:pt/2)*2/pt);
+xlabel('Frequency(Hz)');
+ylabel('Ampitude');
+title('Cross-spectrum Density Function(Sxy)');
+saveas(gcf,'HW4_1CorrelationFnx.png');
+
+%% (c)
+hf1 = Sxy./Sxx;
+subplot(2,1,1);
+plot(fxy,hf1);
+xlim([0 100]);
+xlabel('Frequency(Hz)');
+ylabel('Ampitude');
+title('FRF');
+
+hf2 = (Sxy./Sxx).^0.5;
+subplot(2,1,2);
+plot(fxy,hf2);
+xlim([0 100]);
+xlabel('Frequency(Hz)');
+ylabel('Ampitude');
+title('FRF');
+saveas(gcf,'HW4_2CorrelationFnx.png');
+
+%% (d)
+gammasqr = (abs(Sxy).^2/(Sxx.*Syy));
+plot(fxy,gammasqr);
+xlim([0 100]);
+xlabel('Frequency(Hz)');
+ylabel('Ampitude');
+title('Coherence(via Correlation Function)');
+saveas(gcf,'HW4_3CorrelationFnx.png');
+
+
+
+
+
+
+##### SOURCE END #####
+--></body></html>

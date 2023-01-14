@@ -1,0 +1,265 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>signal_processing_hw6</title><meta name="generator" content="MATLAB 9.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-10-20"><meta name="DC.source" content="signal_processing_hw6.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">prob1</a></li><li><a href="#3">Sampling Rate</a></li><li><a href="#4">prob2</a></li><li><a href="#5">Assign data</a></li><li><a href="#6">Sampling Rate</a></li><li><a href="#7">case a (relative acceleration)</a></li><li><a href="#8">case b (relative acceleration)</a></li><li><a href="#9">ormsby function</a></li></ul></div><pre class="codeinput">clc;clear;close <span class="string">all</span>;
+</pre><h2 id="2">prob1</h2><pre class="codeinput">data3 = importdata(<span class="string">"HW3- building seismic response data.txt"</span>);
+t = data3(:,1);
+ground = data3(:,2);
+top = data3(:,3);
+</pre><h2 id="3">Sampling Rate</h2><pre class="codeinput">sr = round(1/(t(2)-t(1)));
+pt = length(t);
+
+fc=0.08;
+ft=0.1;
+delta = top - ground;
+delta = ormsby(delta,ft,fc,sr,pt);
+delta = delta - mean(delta);
+vel = cumtrapz(t,delta);
+vel2 = detrend(vel);
+trend = vel - vel2;
+disp_2 = cumtrapz(t,vel2);
+figure
+plot(t,disp_2)
+xlabel(<span class="string">'Time (s)'</span>)
+ylabel(<span class="string">'Displacement (mm)'</span>)
+title(<span class="string">'Displacement: Ormsby low pass filter with fc=0.08Hz and ft=0.1'</span>)
+</pre><img vspace="5" hspace="5" src="signal_processing_hw6_01.png" alt=""> <h2 id="4">prob2</h2><h2 id="5">Assign data</h2><pre class="codeinput">[data2,txt,raw] = xlsread(<span class="string">'Homework-2 data set-RCF-Four Specimen Test Data.xlsx'</span>);
+t = data2(:,1);
+RCF6_x = data2(:,2);
+RCF6_y = data2(:,3);
+RCF2_x = data2(:,4);
+RCF2_y = data2(:,5);
+RCF4_x = data2(:,6);
+RCF4_y = data2(:,7);
+RCF3_x = data2(:,8);
+RCF3_y = data2(:,9);
+</pre><h2 id="6">Sampling Rate</h2><pre class="codeinput">sr = round(1/(t(2)-t(1)));
+pt = length(t);
+</pre><h2 id="7">case a (relative acceleration)</h2><p>(RCF2_100_A04 vs. RCF2_100_A10)</p><pre class="codeinput">fc=0.1;
+ft=0.15;
+RCF2_R = RCF2_y - RCF2_x;
+
+<span class="comment">% low-pass ormsby filter</span>
+RCF2_FR = ormsby(RCF2_R,ft,fc,sr,pt);
+RCF2_FR = RCF2_FR - mean(RCF2_FR);
+vel = cumtrapz(t,RCF2_FR);
+vel2 = detrend(vel);
+trend = vel - vel2;
+
+disp_2 = cumtrapz(t,vel2);
+figure
+plot(t,disp_2)
+xlabel(<span class="string">'Time (s)'</span>)
+ylabel(<span class="string">'Displacement (mm)'</span>)
+title(<span class="string">'Displacement: Ormsby low pass filter with fc=0.1Hz and ft=0.15'</span>)
+</pre><img vspace="5" hspace="5" src="signal_processing_hw6_02.png" alt=""> <h2 id="8">case b (relative acceleration)</h2><p>(RCF4_110_A04 vs. RCF4_110_A10)</p><pre class="codeinput">fc=0.1;
+ft=0.15;
+RCF4_R = RCF4_y - RCF4_x;
+
+<span class="comment">% low-pass ormsby filter</span>
+RCF4_FR = ormsby(RCF4_R,ft,fc,sr,pt);
+RCF4_FR = RCF4_FR - mean(RCF4_FR);
+vel = cumtrapz(t,RCF4_FR);
+vel2 = detrend(vel);
+trend = vel - vel2;
+
+disp_2 = cumtrapz(t,vel2);
+figure
+plot(t,disp_2)
+xlabel(<span class="string">'Time (s)'</span>)
+ylabel(<span class="string">'Displacement (mm)'</span>)
+title(<span class="string">'Displacement: Ormsby low pass filter with fc=0.1Hz and ft=0.15'</span>)
+</pre><h2 id="9">ormsby function</h2><pre class="codeinput"><span class="keyword">function</span> y = ormsby(x,ft,fcut,sr,pt)
+dt = 1/sr;
+Nw = pt;
+mnw = fix(Nw/2);
+Nww = 1:1:Nw;
+w = kaiser(Nw,10);
+orm(mnw+1) = 2*(fcut+ft)/2; <span class="comment">% at t=0 amplitude is 2fa = 2*(fc+ft)/2</span>
+t1=0;
+<span class="keyword">for</span> nn=mnw+2:Nw
+    t1=t1+dt;
+    orm(nn)=(cos(2*pi*fcut*t1)-cos(2*pi*ft*t1))/(ft-fcut)/t1^2/2/(pi)^2;
+<span class="keyword">end</span>
+<span class="keyword">for</span> ii=1:mnw
+    orm(ii)=orm(Nw+1-ii);
+<span class="keyword">end</span>
+<span class="comment">%window time interval</span>
+tw=w.*orm';
+Xaf=conv(x,tw,<span class="string">'same'</span>)*dt;
+y = x - Xaf;
+<span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2022a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+clc;clear;close all;
+%% prob1
+data3 = importdata("HW3- building seismic response data.txt");
+t = data3(:,1);
+ground = data3(:,2);
+top = data3(:,3);
+
+%% Sampling Rate
+sr = round(1/(t(2)-t(1)));
+pt = length(t);
+
+fc=0.08;
+ft=0.1;
+delta = top - ground;
+delta = ormsby(delta,ft,fc,sr,pt);
+delta = delta - mean(delta);
+vel = cumtrapz(t,delta);
+vel2 = detrend(vel);
+trend = vel - vel2;
+disp_2 = cumtrapz(t,vel2);
+figure
+plot(t,disp_2)
+xlabel('Time (s)')
+ylabel('Displacement (mm)')
+title('Displacement: Ormsby low pass filter with fc=0.08Hz and ft=0.1')
+
+%% prob2
+%% Assign data
+[data2,txt,raw] = xlsread('Homework-2 data set-RCF-Four Specimen Test Data.xlsx');
+t = data2(:,1);
+RCF6_x = data2(:,2);
+RCF6_y = data2(:,3);
+RCF2_x = data2(:,4);
+RCF2_y = data2(:,5);
+RCF4_x = data2(:,6);
+RCF4_y = data2(:,7);
+RCF3_x = data2(:,8);
+RCF3_y = data2(:,9);
+
+%% Sampling Rate
+sr = round(1/(t(2)-t(1)));
+pt = length(t);
+
+%% case a (relative acceleration)
+% (RCF2_100_A04 vs. RCF2_100_A10)
+fc=0.1;
+ft=0.15;
+RCF2_R = RCF2_y - RCF2_x;
+
+% low-pass ormsby filter
+RCF2_FR = ormsby(RCF2_R,ft,fc,sr,pt);
+RCF2_FR = RCF2_FR - mean(RCF2_FR);
+vel = cumtrapz(t,RCF2_FR);
+vel2 = detrend(vel);
+trend = vel - vel2;
+
+disp_2 = cumtrapz(t,vel2);
+figure
+plot(t,disp_2)
+xlabel('Time (s)')
+ylabel('Displacement (mm)')
+title('Displacement: Ormsby low pass filter with fc=0.1Hz and ft=0.15')
+
+%% case b (relative acceleration)
+% (RCF4_110_A04 vs. RCF4_110_A10)
+fc=0.1;
+ft=0.15;
+RCF4_R = RCF4_y - RCF4_x;
+
+% low-pass ormsby filter
+RCF4_FR = ormsby(RCF4_R,ft,fc,sr,pt);
+RCF4_FR = RCF4_FR - mean(RCF4_FR);
+vel = cumtrapz(t,RCF4_FR);
+vel2 = detrend(vel);
+trend = vel - vel2;
+
+disp_2 = cumtrapz(t,vel2);
+figure
+plot(t,disp_2)
+xlabel('Time (s)')
+ylabel('Displacement (mm)')
+title('Displacement: Ormsby low pass filter with fc=0.1Hz and ft=0.15')
+
+%% ormsby function
+function y = ormsby(x,ft,fcut,sr,pt)
+dt = 1/sr;
+Nw = pt;
+mnw = fix(Nw/2);
+Nww = 1:1:Nw;
+w = kaiser(Nw,10);
+orm(mnw+1) = 2*(fcut+ft)/2; % at t=0 amplitude is 2fa = 2*(fc+ft)/2
+t1=0;
+for nn=mnw+2:Nw
+    t1=t1+dt;
+    orm(nn)=(cos(2*pi*fcut*t1)-cos(2*pi*ft*t1))/(ft-fcut)/t1^2/2/(pi)^2;
+end
+for ii=1:mnw
+    orm(ii)=orm(Nw+1-ii);
+end
+%window time interval
+tw=w.*orm';
+Xaf=conv(x,tw,'same')*dt;
+y = x - Xaf;
+end
+##### SOURCE END #####
+--></body></html>

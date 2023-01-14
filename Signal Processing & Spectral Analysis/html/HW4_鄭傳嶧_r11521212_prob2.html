@@ -1,0 +1,404 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>HW4_&#37165;&#20659;&#23975;_r11521212_prob2</title><meta name="generator" content="MATLAB 9.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-10-27"><meta name="DC.source" content="HW4_&#37165;&#20659;&#23975;_r11521212_prob2.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">(C) Form transfer function</a></li><li><a href="#3">(E) Impulse response function</a></li><li><a href="#4">(G) state-space model</a></li></ul></div><pre class="codeinput"><span class="comment">% SD_Hw4_prob2</span>
+close <span class="string">all</span>;clear;clc;
+opengl <span class="string">hardware</span>;
+<span class="comment">% parameters</span>
+m = 100;
+wn = 2*pi*0.5;
+dmp = 0.03;
+k = wn^2*m;
+c = 2*dmp*wn*m;
+</pre><h2 id="2">(C) Form transfer function</h2><pre class="codeinput"><span class="comment">%--------------------------------------------------------------------------</span>
+<span class="comment">% Form transfer function</span>
+<span class="comment">% Hwz = -m/(ms^2+cs+k)</span>
+<span class="comment">%--------------------------------------------------------------------------</span>
+den = [m c k];
+Hwz = tf(-m,den,<span class="string">'InputName'</span>,<span class="string">'t'</span>,<span class="string">'OutputName'</span>,<span class="string">'s'</span>)      <span class="comment">% &#19978;&#28858; 0s-m</span>
+Hvz = tf([-m 0],den,<span class="string">'InputName'</span>,<span class="string">'t'</span>,<span class="string">'OutputName'</span>,<span class="string">'s'</span>)  <span class="comment">% &#19978;&#28858; -ms+0</span>
+Huz = tf([c k],den,<span class="string">'InputName'</span>,<span class="string">'t'</span>,<span class="string">'OutputName'</span>,<span class="string">'s'</span>)   <span class="comment">% &#19978;&#28858; cs+k</span>
+</pre><h2 id="3">(E) Impulse response function</h2><pre class="codeinput"><span class="comment">%--------------------------------------------------------------------------</span>
+<span class="comment">% Impulse response function</span>
+<span class="comment">%--------------------------------------------------------------------------</span>
+wd = wn*sqrt(1-dmp^2);
+<span class="comment">% Transfer function</span>
+ff = (0:0.01:10)';   <span class="comment">% better to use a column vector % 10 Hz</span>
+Hwz_c = 1./((2*pi*ff).^2-wn^2-sqrt(-1)*2*dmp*wn*(2*pi*ff));
+Hvz_c = sqrt(-1)*(2*pi*ff)./((2*pi*ff).^2-wn^2-sqrt(-1)*2*dmp*wn*(2*pi*ff));
+Huz_c = (sqrt(-1)*2*dmp*wn*(2*pi*ff)+wn^2)./(wn^2-(2*pi*ff).^2+sqrt(-1)*2*dmp*wn*(2*pi*ff));
+
+figure(<span class="string">'name'</span>,<span class="string">'2(d)'</span>);
+subplot(3,2,1);
+plot(ff,db(abs(Hwz_c)));
+xlabel(<span class="string">'frequency (Hz)'</span>);
+ylabel(<span class="string">'magnitude (dB)'</span>);
+
+subplot(3,2,2);
+plot(ff,mod(angle(Hwz_c)*180/pi+180,360)-180);
+xlabel(<span class="string">'frequency (Hz)'</span>);
+ylabel(<span class="string">'phase (deg)'</span>);
+
+subplot(3,2,3);
+plot(ff,db(abs(Hvz_c)));
+xlabel(<span class="string">'frequency (Hz)'</span>);
+ylabel(<span class="string">'magnitude (dB)'</span>);
+
+subplot(3,2,4);
+plot(ff,mod(angle(Hvz_c)*180/pi+180,360)-180);
+xlabel(<span class="string">'frequency (Hz)'</span>);
+ylabel(<span class="string">'phase (deg)'</span>);
+
+subplot(3,2,5);
+plot(ff,db(abs(Huz_c)));
+xlabel(<span class="string">'frequency (Hz)'</span>);
+ylabel(<span class="string">'magnitude (dB)'</span>);
+
+subplot(3,2,6);
+plot(ff,mod(angle(Huz_c)*180/pi+180,360)-180);
+xlabel(<span class="string">'frequency (Hz)'</span>);
+ylabel(<span class="string">'phase (deg)'</span>);
+sgtitle(<span class="string">'Using the equations in (d)'</span>);
+
+Hwz_m = squeeze(freqresp(Hwz,2*pi*ff));
+Hvz_m = squeeze(freqresp(Hvz,2*pi*ff));
+Huz_m = squeeze(freqresp(Huz,2*pi*ff));
+figure(<span class="string">'name'</span>,<span class="string">'2(e)'</span>);
+
+subplot(3,2,1);
+plot(ff,db(abs(Hwz_m)),<span class="string">'r'</span>);
+xlabel(<span class="string">'frequency (Hz)'</span>);
+ylabel(<span class="string">'magnitude (dB)'</span>);
+
+subplot(3,2,2);
+plot(ff,mod(angle(Hwz_m)*180/pi+180,360)-180,<span class="string">'r'</span>)
+xlabel(<span class="string">'frequency (Hz)'</span>);
+ylabel(<span class="string">'phase (deg)'</span>);
+
+subplot(3,2,3);
+plot(ff,db(abs(Hvz_m)),<span class="string">'r'</span>)
+xlabel(<span class="string">'frequency (Hz)'</span>);
+ylabel(<span class="string">'magnitude (dB)'</span>);
+
+subplot(3,2,4);
+plot(ff,mod(angle(Hvz_m)*180/pi+180,360)-180,<span class="string">'r'</span>)
+xlabel(<span class="string">'frequency (Hz)'</span>);
+ylabel(<span class="string">'phase (deg)'</span>);
+
+subplot(3,2,5);
+plot(ff,db(abs(Huz_m)),<span class="string">'r'</span>);
+xlabel(<span class="string">'frequency (Hz)'</span>);
+ylabel(<span class="string">'magnitude (dB)'</span>);
+
+subplot(3,2,6);
+plot(ff,mod(angle(Huz_m)*180/pi+180,360)-180,<span class="string">'r'</span>)
+xlabel(<span class="string">'frequency (Hz)'</span>);
+ylabel(<span class="string">'phase (deg)'</span>);
+sgtitle(<span class="string">'Using MATLAB function'</span>);
+</pre><h2 id="4">(G) state-space model</h2><pre class="codeinput"><span class="comment">%--------------------------------------------------------------------------</span>
+<span class="comment">% sate-space model</span>
+<span class="comment">%--------------------------------------------------------------------------</span>
+Ac = [0 1;-k/m -c/m]
+Bc = [0;-1]
+Cc = [eye(2);[-k/m -c/m]]
+Dc = [0;0;0]
+
+sys = ss(Ac,Bc,Cc,Dc);
+Hwz_ss = tf(sys(1,:));
+Hvz_ss = tf(sys(2,:));
+Huz_ss = tf(sys(3,:));
+ff = (0:0.01:10)';
+
+Hwz_ss = squeeze(freqresp(tf(sys(1,:)),2*pi*ff));
+Hvz_ss = squeeze(freqresp(tf(sys(2,:)),2*pi*ff));
+Huz_ss = squeeze(freqresp(tf(sys(3,:)),2*pi*ff));
+
+figure(<span class="string">'name'</span>,<span class="string">'2(g)'</span>);
+subplot(3,2,1);
+plot(ff,db(abs(Hwz_ss)),<span class="string">'r-'</span>,<span class="string">'linewidth'</span>,2)
+hold <span class="string">on</span>
+plot(ff,db(abs(Hwz_m)),<span class="string">'b--'</span>)
+xlabel(<span class="string">'frequency (Hz)'</span>);
+ylabel(<span class="string">'magnitude (dB)'</span>);
+legend(<span class="string">'(g)'</span>,<span class="string">'(e)'</span>);
+
+subplot(3,2,2);
+plot(ff,mod(angle(Hwz_ss)*180/pi+180,360)-180,<span class="string">'r-'</span>,<span class="string">'linewidth'</span>,2)
+hold <span class="string">on</span>
+plot(ff,mod(angle(Hwz_m)*180/pi+180,360)-180,<span class="string">'b--'</span>)
+xlabel(<span class="string">'frequency (Hz)'</span>);
+ylabel(<span class="string">'phase (deg)'</span>);
+legend(<span class="string">'(g)'</span>,<span class="string">'(e)'</span>);
+
+subplot(3,2,3);
+plot(ff,db(abs(Hvz_ss)),<span class="string">'r-'</span>,<span class="string">'linewidth'</span>,2)
+hold <span class="string">on</span>
+plot(ff,db(abs(Hvz_m)),<span class="string">'b--'</span>)
+xlabel(<span class="string">'frequency (Hz)'</span>);
+ylabel(<span class="string">'magnitude (dB)'</span>);
+legend(<span class="string">'(g)'</span>,<span class="string">'(e)'</span>);
+
+subplot(3,2,4);
+plot(ff,mod(angle(Hvz_ss)*180/pi+180,360)-180,<span class="string">'r-'</span>,<span class="string">'linewidth'</span>,2)
+hold <span class="string">on</span>
+plot(ff,mod(angle(Hvz_m)*180/pi+180,360)-180,<span class="string">'b--'</span>)
+xlabel(<span class="string">'frequency (Hz)'</span>);
+ylabel(<span class="string">'phase (deg)'</span>);
+legend(<span class="string">'(g)'</span>,<span class="string">'(e)'</span>);
+
+subplot(3,2,5);
+plot(ff,db(abs(Huz_ss)),<span class="string">'r-'</span>,<span class="string">'linewidth'</span>,2)
+hold <span class="string">on</span>
+plot(ff,db(abs(Huz_m)),<span class="string">'b--'</span>)
+xlabel(<span class="string">'frequency (Hz)'</span>);
+ylabel(<span class="string">'magnitude (dB)'</span>);
+legend(<span class="string">'(g)'</span>,<span class="string">'(e)'</span>);
+
+subplot(3,2,6);
+plot(ff,mod(angle(Huz_ss)*180/pi+180,360)-180,<span class="string">'r-'</span>,<span class="string">'linewidth'</span>,2)
+hold <span class="string">on</span>
+plot(ff,mod(angle(Huz_m)*180/pi+180,360)-180,<span class="string">'b--'</span>)
+xlabel(<span class="string">'frequency (Hz)'</span>);
+ylabel(<span class="string">'phase (deg)'</span>);
+legend(<span class="string">'(g)'</span>,<span class="string">'(e)'</span>)
+
+sgtitle(<span class="string">'(g)'</span>);
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2022a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+% SD_Hw4_prob2 
+close all;clear;clc;
+opengl hardware; 
+% parameters
+m = 100; 
+wn = 2*pi*0.5; 
+dmp = 0.03; 
+k = wn^2*m;
+c = 2*dmp*wn*m;
+
+%% (C) Form transfer function
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% Form transfer function
+% Hwz = -m/(ms^2+cs+k)
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+den = [m c k]; 
+Hwz = tf(-m,den,'InputName','t','OutputName','s')      % 上為 0s-m
+Hvz = tf([-m 0],den,'InputName','t','OutputName','s')  % 上為 -ms+0
+Huz = tf([c k],den,'InputName','t','OutputName','s')   % 上為 cs+k
+
+%% (E) Impulse response function
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% Impulse response function
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+wd = wn*sqrt(1-dmp^2);
+% Transfer function
+ff = (0:0.01:10)';   % better to use a column vector % 10 Hz
+Hwz_c = 1./((2*pi*ff).^2-wn^2-sqrt(-1)*2*dmp*wn*(2*pi*ff));
+Hvz_c = sqrt(-1)*(2*pi*ff)./((2*pi*ff).^2-wn^2-sqrt(-1)*2*dmp*wn*(2*pi*ff));
+Huz_c = (sqrt(-1)*2*dmp*wn*(2*pi*ff)+wn^2)./(wn^2-(2*pi*ff).^2+sqrt(-1)*2*dmp*wn*(2*pi*ff));
+
+figure('name','2(d)');
+subplot(3,2,1);
+plot(ff,db(abs(Hwz_c))); 
+xlabel('frequency (Hz)'); 
+ylabel('magnitude (dB)');
+
+subplot(3,2,2);
+plot(ff,mod(angle(Hwz_c)*180/pi+180,360)-180); 
+xlabel('frequency (Hz)');
+ylabel('phase (deg)');
+
+subplot(3,2,3);
+plot(ff,db(abs(Hvz_c))); 
+xlabel('frequency (Hz)');
+ylabel('magnitude (dB)');
+
+subplot(3,2,4);
+plot(ff,mod(angle(Hvz_c)*180/pi+180,360)-180); 
+xlabel('frequency (Hz)');
+ylabel('phase (deg)');
+
+subplot(3,2,5);
+plot(ff,db(abs(Huz_c)));
+xlabel('frequency (Hz)'); 
+ylabel('magnitude (dB)');
+
+subplot(3,2,6);
+plot(ff,mod(angle(Huz_c)*180/pi+180,360)-180);
+xlabel('frequency (Hz)');
+ylabel('phase (deg)');
+sgtitle('Using the equations in (d)');
+
+Hwz_m = squeeze(freqresp(Hwz,2*pi*ff));
+Hvz_m = squeeze(freqresp(Hvz,2*pi*ff)); 
+Huz_m = squeeze(freqresp(Huz,2*pi*ff));
+figure('name','2(e)');
+
+subplot(3,2,1); 
+plot(ff,db(abs(Hwz_m)),'r'); 
+xlabel('frequency (Hz)');
+ylabel('magnitude (dB)'); 
+
+subplot(3,2,2); 
+plot(ff,mod(angle(Hwz_m)*180/pi+180,360)-180,'r')
+xlabel('frequency (Hz)');
+ylabel('phase (deg)');
+
+subplot(3,2,3); 
+plot(ff,db(abs(Hvz_m)),'r') 
+xlabel('frequency (Hz)');
+ylabel('magnitude (dB)');
+
+subplot(3,2,4); 
+plot(ff,mod(angle(Hvz_m)*180/pi+180,360)-180,'r') 
+xlabel('frequency (Hz)');
+ylabel('phase (deg)');
+
+subplot(3,2,5); 
+plot(ff,db(abs(Huz_m)),'r');
+xlabel('frequency (Hz)');
+ylabel('magnitude (dB)'); 
+
+subplot(3,2,6); 
+plot(ff,mod(angle(Huz_m)*180/pi+180,360)-180,'r') 
+xlabel('frequency (Hz)');
+ylabel('phase (deg)');
+sgtitle('Using MATLAB function');
+
+%% (G) state-space model
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% sate-space model
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+Ac = [0 1;-k/m -c/m]
+Bc = [0;-1]
+Cc = [eye(2);[-k/m -c/m]]
+Dc = [0;0;0]
+
+sys = ss(Ac,Bc,Cc,Dc);
+Hwz_ss = tf(sys(1,:));
+Hvz_ss = tf(sys(2,:));
+Huz_ss = tf(sys(3,:));
+ff = (0:0.01:10)';
+
+Hwz_ss = squeeze(freqresp(tf(sys(1,:)),2*pi*ff));
+Hvz_ss = squeeze(freqresp(tf(sys(2,:)),2*pi*ff));
+Huz_ss = squeeze(freqresp(tf(sys(3,:)),2*pi*ff));
+
+figure('name','2(g)');
+subplot(3,2,1);
+plot(ff,db(abs(Hwz_ss)),'r-','linewidth',2)
+hold on
+plot(ff,db(abs(Hwz_m)),'bREPLACE_WITH_DASH_DASH')
+xlabel('frequency (Hz)');
+ylabel('magnitude (dB)');
+legend('(g)','(e)');
+
+subplot(3,2,2);
+plot(ff,mod(angle(Hwz_ss)*180/pi+180,360)-180,'r-','linewidth',2)
+hold on
+plot(ff,mod(angle(Hwz_m)*180/pi+180,360)-180,'bREPLACE_WITH_DASH_DASH')
+xlabel('frequency (Hz)');
+ylabel('phase (deg)');
+legend('(g)','(e)');
+
+subplot(3,2,3);
+plot(ff,db(abs(Hvz_ss)),'r-','linewidth',2)
+hold on
+plot(ff,db(abs(Hvz_m)),'bREPLACE_WITH_DASH_DASH')
+xlabel('frequency (Hz)');
+ylabel('magnitude (dB)');
+legend('(g)','(e)');
+
+subplot(3,2,4);
+plot(ff,mod(angle(Hvz_ss)*180/pi+180,360)-180,'r-','linewidth',2)
+hold on
+plot(ff,mod(angle(Hvz_m)*180/pi+180,360)-180,'bREPLACE_WITH_DASH_DASH')
+xlabel('frequency (Hz)');
+ylabel('phase (deg)');
+legend('(g)','(e)');
+
+subplot(3,2,5);
+plot(ff,db(abs(Huz_ss)),'r-','linewidth',2)
+hold on
+plot(ff,db(abs(Huz_m)),'bREPLACE_WITH_DASH_DASH')
+xlabel('frequency (Hz)');
+ylabel('magnitude (dB)');
+legend('(g)','(e)');
+
+subplot(3,2,6);
+plot(ff,mod(angle(Huz_ss)*180/pi+180,360)-180,'r-','linewidth',2)
+hold on
+plot(ff,mod(angle(Huz_m)*180/pi+180,360)-180,'bREPLACE_WITH_DASH_DASH')
+xlabel('frequency (Hz)');
+ylabel('phase (deg)');
+legend('(g)','(e)')
+
+sgtitle('(g)');
+
+##### SOURCE END #####
+--></body></html>
